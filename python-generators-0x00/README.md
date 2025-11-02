@@ -1,0 +1,1 @@
+this is the readme file to python-generators-0x00
