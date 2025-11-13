@@ -56,3 +56,35 @@ if __name__ == "__main__":
             result = client_instance._public_repos_url
 
             self.assertEqual(result, expected_url)
+    @patch("client.get_json")
+    def test_public_repos(self, mock_get_json):
+        """Test GithubOrgClient.public_repos returns expected repo names"""
+        org_name = "holberton"
+        repos_payload = [
+            {"name": "repo1"},
+            {"name": "repo2"},
+            {"name": "repo3"}
+        ]
+        mock_get_json.return_value = repos_payload
+        expected_repos = ["repo1", "repo2", "repo3"]
+
+        client_instance = GithubOrgClient(org_name)
+
+        # Patch the _public_repos_url property
+        with patch.object(
+            GithubOrgClient,
+            "_public_repos_url",
+            new_callable=property
+        ) as mock_url:
+            mock_url.return_value = "http://fakeurl.com/repos"
+
+            result = client_instance.public_repos()
+
+            # Check that result matches the repo names
+            self.assertEqual(result, expected_repos)
+
+            # Ensure _public_repos_url property was accessed once
+            self.assertEqual(mock_url.call_count, 1)
+
+            # Ensure get_json was called once with the mocked URL
+            mock_get_json.assert_called_once_with("http://fakeurl.com/repos")
