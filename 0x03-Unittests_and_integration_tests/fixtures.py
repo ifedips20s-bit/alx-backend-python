@@ -1,27 +1,16 @@
 #!/usr/bin/env python3
-#!/usr/bin/env python3
-"""
-Fixtures for GithubOrgClient integration tests
-"""
-
-# Organization payload example
 org_payload = {
     "login": "holberton",
-    "id": 123,
+    "id": 123456,
     "repos_url": "https://api.github.com/orgs/holberton/repos"
 }
-
-# Repositories payload example
 repos_payload = [
-    {"name": "repo1", "license": {"key": "apache-2"}},
+    {"name": "repo1", "license": {"key": "apache-2.0"}},
     {"name": "repo2", "license": {"key": "mit"}},
-    {"name": "repo3", "license": {"key": "apache-2"}}
+    {"name": "repo3", "license": {"key": "apache-2.0"}}
 ]
 
-# Expected repo names for all repos
 expected_repos = ["repo1", "repo2", "repo3"]
-
-# Expected repo names filtered by license 'apache-2'
 apache2_repos = ["repo1", "repo3"]
 
 TEST_PAYLOAD = [
