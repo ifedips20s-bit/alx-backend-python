@@ -20,10 +20,6 @@ class TestAccessNestedMap(unittest.TestCase):
         """Test access_nested_map returns the expected result"""
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
-
-if __name__ == "__main__":
-    unittest.main()
-
     @parameterized.expand([
         ({}, ("a",), "a"),
         ({"a": 1}, ("a", "b"), "b")
@@ -32,5 +28,8 @@ if __name__ == "__main__":
         """Test that KeyError is raised with the correct message"""
         with self.assertRaises(KeyError) as error:
             access_nested_map(nested_map, path)
-
         self.assertEqual(str(error.exception), f"'{expected_key}'")
+
+
+if __name__ == "__main__":
+    unittest.main()
