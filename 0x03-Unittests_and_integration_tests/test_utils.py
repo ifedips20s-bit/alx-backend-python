@@ -29,10 +29,7 @@ class TestAccessNestedMap(unittest.TestCase):
         """Test that KeyError is raised with the correct message"""
         with self.assertRaises(KeyError) as error:
             access_nested_map(nested_map, path)
-        self.assertEqual(
-            str(error.exception),
-            f"'{expected_key}'"
-        )
+        self.assertEqual(str(error.exception), f"'{expected_key}'")
 
 
 class TestGetJson(unittest.TestCase):
@@ -70,16 +67,12 @@ class TestMemoize(unittest.TestCase):
 
         test_obj = TestClass()
 
-        with patch.object(test_obj, 'a_method', return_value=42) as mock_method:
-            # Access memoized property twice
+        with patch.object(test_obj, "a_method", return_value=42) as mock_method:
             result1 = test_obj.a_property
             result2 = test_obj.a_property
 
-            # Check values
             self.assertEqual(result1, 42)
             self.assertEqual(result2, 42)
-
-            # Ensure a_method was called only once
             mock_method.assert_called_once()
 
 
