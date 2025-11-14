@@ -132,6 +132,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
+# Use custom User model
+AUTH_USER_MODEL = 'chats.User'
+
 # Django REST Framework configuration
 REST_FRAMEWORK = {
     # Require authentication for all API endpoints by default
