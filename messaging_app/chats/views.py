@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Message, User
@@ -11,11 +11,10 @@ class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]  # <-- added filter support
+    search_fields = ['participants__email', 'participants__first_name', 'participants__last_name']
 
     def create(self, request, *args, **kwargs):
-        """
-        Create a new conversation with the requesting user and optional additional participants.
-        """
         participants_ids = request.data.get('participants', [])
         if not isinstance(participants_ids, list):
             return Response({"error": "participants must be a list of user IDs."}, status=status.HTTP_400_BAD_REQUEST)
@@ -39,11 +38,10 @@ class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]  # <-- added filter support
+    search_fields = ['message_body', 'sender__email']
 
     def create(self, request, *args, **kwargs):
-        """
-        Send a message in an existing conversation.
-        """
         conversation_id = request.data.get('conversation_id')
         message_body = request.data.get('message_body', '').strip()
 
