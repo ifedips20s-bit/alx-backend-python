@@ -10,7 +10,10 @@ from client import GithubOrgClient
 from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
 
 
-# ------------------- UNIT TESTS ------------------- #
+# ============================================================
+# ====================== UNIT TESTS ===========================
+# ============================================================
+
 class TestGithubOrgClient(unittest.TestCase):
     """Unit tests for GithubOrgClient class"""
 
@@ -83,20 +86,23 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-# ------------------- INTEGRATION TESTS ------------------- #
+# ============================================================
+# ================== INTEGRATION TESTS ========================
+# ============================================================
+
 @parameterized_class([{
     "org_payload": org_payload,
     "repos_payload": repos_payload,
     "expected_repos": expected_repos,
     "apache2_repos": apache2_repos
 }])
-class TestIntegrationGithubOrgClient(unittest.TestCase):
+class TestIntegrationGithubOrgClient_0(unittest.TestCase):
     """Integration tests for GithubOrgClient.public_repos using fixtures"""
 
     @classmethod
     def setUpClass(cls):
         """Patch requests.get in client module"""
-        cls.get_patcher = patch("requests.get")
+        cls.get_patcher = patch("client.requests.get")
         cls.mock_get = cls.get_patcher.start()
 
         def side_effect(url, *args, **kwargs):
@@ -114,11 +120,13 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher.stop()
 
     def test_public_repos(self):
+        """Test that public_repos returns expected repo list"""
         client = GithubOrgClient("holberton")
         repos = client.public_repos()
         self.assertEqual(repos, self.expected_repos)
 
     def test_public_repos_with_license(self):
+        """Test filtering repos by license"""
         client = GithubOrgClient("holberton")
         repos = client.public_repos(license="apache-2.0")
         self.assertEqual(repos, self.apache2_repos)

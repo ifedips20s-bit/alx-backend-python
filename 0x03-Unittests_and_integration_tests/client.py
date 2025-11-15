@@ -1,21 +1,14 @@
 #!/usr/bin/env python3
 """A github org client
 """
-from typing import (
-    List,
-    Dict,
-)
+from typing import List, Dict
+import requests  # Added for integration tests
 
-from utils import (
-    get_json,
-    access_nested_map,
-    memoize,
-)
+from utils import get_json, access_nested_map, memoize
 
 
 class GithubOrgClient:
-    """A Githib org client
-    """
+    """A Github org client"""
     ORG_URL = "https://api.github.com/orgs/{org}"
 
     def __init__(self, org_name: str) -> None:
@@ -44,7 +37,6 @@ class GithubOrgClient:
             repo["name"] for repo in json_payload
             if license is None or self.has_license(repo, license)
         ]
-
         return public_repos
 
     @staticmethod
