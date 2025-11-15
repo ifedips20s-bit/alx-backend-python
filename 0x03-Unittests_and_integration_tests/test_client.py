@@ -90,7 +90,7 @@ class TestGithubOrgClient(unittest.TestCase):
     "expected_repos": expected_repos,
     "apache2_repos": apache2_repos
 }])
-class TestIntegrationGithubOrgClient(unittest.TestCase):
+class TestIntegrationGithubOrgClient_0(unittest.TestCase):
     """Integration tests for GithubOrgClient.public_repos using fixtures"""
 
     @classmethod
