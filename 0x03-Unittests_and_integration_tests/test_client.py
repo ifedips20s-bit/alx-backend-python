@@ -90,16 +90,17 @@ class TestGithubOrgClient(unittest.TestCase):
     "expected_repos": expected_repos,
     "apache2_repos": apache2_repos
 }])
-class TestIntegrationGithubOrgClient_0(unittest.TestCase):
+class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for GithubOrgClient.public_repos using fixtures"""
 
     @classmethod
     def setUpClass(cls):
-        """Patch requests.get in client module"""
-        cls.get_patcher = patch("client.requests.get")
+        """Patch requests.get to return fixture payloads based on URL"""
+        cls.get_patcher = patch("requests.get")
         cls.mock_get = cls.get_patcher.start()
 
         def side_effect(url, *args, **kwargs):
+            """Return different payloads depending on URL"""
             mock_resp = cls.mock_get.return_value
             if url.endswith("/repos"):
                 mock_resp.json.return_value = cls.repos_payload
@@ -111,14 +112,21 @@ class TestIntegrationGithubOrgClient_0(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        """Stop patching requests.get"""
         cls.get_patcher.stop()
 
     def test_public_repos(self):
+        """Test public_repos returns expected repository names"""
         client = GithubOrgClient("holberton")
         repos = client.public_repos()
         self.assertEqual(repos, self.expected_repos)
 
     def test_public_repos_with_license(self):
+        """Test public_repos returns only repos with license apache-2.0"""
         client = GithubOrgClient("holberton")
         repos = client.public_repos(license="apache-2.0")
         self.assertEqual(repos, self.apache2_repos)
+
+
+if __name__ == "__main__":
+    unittest.main()
