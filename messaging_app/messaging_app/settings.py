@@ -14,7 +14,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',    # added
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'messaging_app.chats.permissions.IsParticipantOfConversation',
     )
 }
 
