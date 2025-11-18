@@ -1,23 +1,29 @@
-# Add rest_framework to INSTALLED_APPS if not already present
+# Add rest_framework and JWT packages
 INSTALLED_APPS = [
-    ...
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+
     'rest_framework',
     'rest_framework_simplejwt',
-    'messaging_app.chats',  # Ensure your app is included
+    'messaging_app.chats',  # Your app
 ]
 
-# DRF default authentication
+# DRF default authentication and permissions
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',  # optional, for web
+        'rest_framework.authentication.SessionAuthentication',  # optional for web
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
 }
 
-# Simple JWT settings (optional: adjust expiry)
+# Optional: Simple JWT settings
 from datetime import timedelta
 
 SIMPLE_JWT = {
