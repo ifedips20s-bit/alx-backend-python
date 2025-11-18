@@ -1,21 +1,27 @@
-# Add rest_framework to INSTALLED_APPS if not already present
+# Add rest_framework and related apps to INSTALLED_APPS
 INSTALLED_APPS = [
     ...
     'rest_framework',
+    'django_filters',               # Add django-filters
     'rest_framework_simplejwt',
-    'messaging_app.chats',  # Ensure your app is included
+    'messaging_app.chats',          # Ensure your app is included
 ]
 
-# DRF default authentication
+# DRF configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',  # optional, for web
-        'rest_framework.authentication.BasicAuthentication',    # added
+        'rest_framework.authentication.BasicAuthentication',    # optional, for testing
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'messaging_app.chats.permissions.IsParticipantOfConversation',
-    )
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'messaging_app.chats.pagination.MessagePagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
 
 # Simple JWT settings (optional: adjust expiry)
