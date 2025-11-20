@@ -146,7 +146,7 @@ REST_FRAMEWORK = {
     ),
 
     # --- Pagination ---
-    'DEFAULT_PAGINATION_CLASS': 'chats.pagination.MessagePagination',
+    'DEFAULT_PAGINATION_CLASS': 'chats.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
 
     # --- Filtering ---
