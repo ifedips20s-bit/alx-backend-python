@@ -13,19 +13,20 @@ class User(AbstractUser):
     ]
 
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    first_name = models.CharField(max_length=150, null=False)
-    last_name = models.CharField(max_length=150, null=False)
+
+    # AbstractUser already has: first_name, last_name, password, username
+    # Only add what is new:
     email = models.EmailField(unique=True, null=False)
-    password_hash = models.CharField(max_length=128, null=False)  # can store hashed password
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='guest')
     created_at = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']  # username required by AbstractUser
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
+
 
 # ----------------------------
 # Conversation Model
@@ -38,6 +39,7 @@ class Conversation(models.Model):
     def __str__(self):
         participant_names = ", ".join([str(p) for p in self.participants.all()])
         return f"Conversation ({self.conversation_id}): {participant_names}"
+
 
 # ----------------------------
 # Message Model
