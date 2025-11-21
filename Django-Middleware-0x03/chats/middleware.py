@@ -95,3 +95,23 @@ class OffensiveLanguageMiddleware:
         else:
             ip = request.META.get("REMOTE_ADDR", "")
         return ip
+    
+class RolePermissionMiddleware:
+     """
+    Middleware to check if the user has admin or moderator role
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Only restrict chat endpoints (or customize as needed)
+        if request.path.startswith("/api/chats/") or request.path.startswith("/chats/"):
+            user = request.user
+            if not user.is_authenticated:
+                return HttpResponseForbidden("You must be logged in to access this resource.")
+
+            # Check role; assuming your User model has a 'role' field
+            if getattr(user, 'role', '').lower() not in ['admin', 'moderator']:
+                return HttpResponseForbidden("You do not have permission to perform this action.")
+
+        return self.get_response(request)
