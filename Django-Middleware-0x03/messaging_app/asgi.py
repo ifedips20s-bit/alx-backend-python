@@ -11,6 +11,9 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'messaging_app.settings')
+import messaging_app
+
+export DJANGO_SETTINGS_MODULE=messaging_app.settings
+os.environ.setdefault('DJANGO SETTINGS MODULE', 'messaging app.settings')
 
 application = get_asgi_application()
