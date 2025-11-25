@@ -28,3 +28,26 @@ def log_message_edit(sender, instance, **kwargs):
 
         # Mark message as edited
         instance.edited = True
+
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+from .models import Message, MessageHistory, Notification
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+@receiver(post_delete, sender=User)
+def delete_user_related_data(sender, instance, **kwargs):
+    """
+    Automatically delete messages, notifications, and message history
+    when a user is deleted.
+    """
+    # Delete all messages sent or received by this user
+    Message.objects.filter(sender=instance).delete()
+    Message.objects.filter(receiver=instance).delete()
+    
+    # Delete all notifications for this user
+    Notification.objects.filter(user=instance).delete()
+    
+    # Delete all message histories where this user edited messages
+    MessageHistory.objects.filter(edited_by=instance).delete()
