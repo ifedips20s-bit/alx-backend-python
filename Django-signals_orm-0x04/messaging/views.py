@@ -43,3 +43,14 @@ def conversation_view(request, receiver_id):
         "messages": messages,
         "receiver": receiver
     })
+
+@login_required
+def inbox_view(request):
+    """
+    Display only unread messages for the logged-in user.
+    """
+    unread_messages = Message.unread.for_user(request.user)
+
+    return render(request, "inbox.html", {
+        "unread_messages": unread_messages
+    })

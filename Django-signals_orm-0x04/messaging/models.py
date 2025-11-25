@@ -4,6 +4,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+class UnreadMessagesManager(models.Manager):
+    def for_user(self, user):
+        return self.filter(receiver=user, read=False).only(
+            "id", "sender", "receiver", "content", "timestamp"
+        )
+
 class Message(models.Model):
     sender = models.ForeignKey(User, related_name="sent_messages", on_delete=models.CASCADE)
     receiver = models.ForeignKey(User, related_name="received_messages", on_delete=models.CASCADE)
@@ -22,6 +28,13 @@ class Message(models.Model):
         related_name="replies",
         on_delete=models.CASCADE
     )
+
+ # New field to track if the message has been read
+    read = models.BooleanField(default=False)
+
+    # Attach the custom manager
+    objects = models.Manager()  # default manager
+    unread = UnreadMessagesManager()  # custom manager
 
     def __str__(self):
         return f"Message {self.id} from {self.sender} to {self.receiver}"
