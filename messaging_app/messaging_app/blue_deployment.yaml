@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messaging-app-deployment
+  labels:
+    app: messaging-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messaging-app
+  template:
+    metadata:
+      labels:
+        app: messaging-app
+    spec:
+  containers:
+    - name: messaging-app
+      image: messaging_app:2.00  # T when using Minikube + local images
+      imagePullPolicy: Never
+          ports:
+            - containerPort: 8000        # Django default port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: messaging-app-service
+spec:
+  type: ClusterIP
+  selector:
+    app: messaging-app
+  ports:
+    - port: 8000        # service port
+      targetPort: 8000  # Django container port
