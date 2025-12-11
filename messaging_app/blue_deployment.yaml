@@ -14,10 +14,10 @@ spec:
       labels:
         app: messaging-app
     spec:
-      containers:
-        - name: messaging-app
-          image: messaging_app:latest   # <-- Your local docker image name
-          imagePullPolicy: Never        # IMPORTANT when using Minikube + local images
+  containers:
+    - name: messaging-app
+      image: messaging_app:2.00  # T when using Minikube + local images
+      imagePullPolicy: Never
           ports:
             - containerPort: 8000        # Django default port
 ---
