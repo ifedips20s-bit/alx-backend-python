@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# kubctl-0x01: Scale Django app, verify pods, perform load test, monitor resources
+
+DEPLOYMENT_NAME="messaging-app-deployment"
+NAMESPACE="default"
+REPLICAS=3
+SERVICE_NAME="messaging-app-service"
+
+echo "Scaling deployment $DEPLOYMENT_NAME to $REPLICAS replicas..."
+kubectl scale deployment $DEPLOYMENT_NAME --replicas=$REPLICAS -n $NAMESPACE
+
+echo "Waiting 10 seconds for pods to start..."
+sleep 10
+
+echo "Verifying pods:"
+kubectl get pods -n $NAMESPACE
+
+# Get the ClusterIP of the service
+APP_IP=$(kubectl get svc $SERVICE_NAME -n $NAMESPACE -o jsonpath='{.spec.clusterIP}')
+APP_PORT=$(kubectl get svc $SERVICE_NAME -n $NAMESPACE -o jsonpath='{.spec.ports[0].port}')
+
+echo "Performing load test on http://$APP_IP:$APP_PORT using wrk..."
+if command -v wrk &> /dev/null; then
+    wrk -t2 -c5 -d10s http://$APP_IP:$APP_PORT
+else
+    echo "wrk is not installed. Install wrk to perform load testing."
+fi
+
+echo "Monitoring resource usage of pods:"
+kubectl top pods -n $NAMESPACE
