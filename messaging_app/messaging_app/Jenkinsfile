@@ -2,34 +2,59 @@ pipeline {
     agent any
 
     environment {
-        DJANGO_SETTINGS_MODULE = 'messaging_app.settings'
+        DOCKER_IMAGE = "yourdockerhubusername/messaging_app"
+        DOCKER_TAG = "latest"
+        DOCKER_CREDENTIALS_ID = "dockerhub-credentials"
     }
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
-                git branch: 'main', 
-                    url: 'https://github.com/ifedips20s-bit/alx-backend-python.git',
-                    credentialsId: '4b618cbf-401a-4b9e-a9b7-e96e017252ec'
+                git credentialsId: '4b618cbf-401a-4b9e-a9b7-e96e017252ec',
+                    url: 'https://github.com/ifedips20s-bit/alx-backend-python.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'python3 -m venv venv'
-                 venv/bin/activate
-                 pip3 install --upgrade pip'
-              pip3 install -r messaging_app/requirements.txt'
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install --upgrade pip
+                pip install -r messaging_app/requirements.txt
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '. venv/bin/activate && pytest messaging_app --junitxml=reports/results.xml'
+                sh '''
+                . venv/bin/activate
+                pytest messaging_app
+                '''
             }
-            post {
-                always {
-                    junit 'reports/results.xml'
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                docker build -t $DOCKER_IMAGE:$DOCKER_TAG messaging_app
+                '''
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: DOCKER_CREDENTIALS_ID,
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push $DOCKER_IMAGE:$DOCKER_TAG
+                    '''
                 }
             }
         }
@@ -37,10 +62,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            echo "Docker image built and pushed successfully!"
         }
         failure {
-            echo 'Pipeline failed!'
+            echo "Pipeline failed."
         }
     }
 }
